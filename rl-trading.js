@@ -10,30 +10,28 @@
 (function() {
     'use strict';
     var arr = [];
-    var myWindow;
-    var index = 0;
 
-    // declare functions
-    var myLoad = function() {
-        try {
-            myWindow.document.querySelector('.rlg-btn-trade-form.rlg-btn-primary').click();
-            setTimeout(function() {
-                myWindow.close();
-                // recursively update following trades
-                setTimeout(function() {
-                    updateTrade(index + 1);
-                }, 8000);
-            }, 8000);
-        } catch (e) {
-            myWindow.close();
-            updateTrade(index + 1)
-        }
-    }
+    // declare functions    
     var updateTrade = function(index) {
         if (index === arr.length) {
             return;
         }
-        myWindow = window.open(arr[index]);
+        var myWindow = window.open(arr[index]);
+        var myLoad = function() {
+            try {
+                myWindow.document.querySelector('.rlg-btn-trade-form.rlg-btn-primary').click();
+                setTimeout(function() {
+                    myWindow.close();
+                    // recursively update following trades
+                    setTimeout(function() {
+                        updateTrade(index + 1);
+                    }, 8000);
+                }, 8000);
+            } catch (e) {
+                myWindow.close();
+                updateTrade(index + 1)
+            }
+        }
         myWindow.addEventListener('load', myLoad, false);
     }
     var initiate = function() {
