@@ -36,6 +36,9 @@
     }
     var initiate = function() {
         updateTrade(0);
+        var today = new Date();
+        var time = today.getHours() + ":" + today.getMinutes();
+        console.log('Finished updating trades at ' + time);
     };
 
     // add a button to start automation
