@@ -7,27 +7,32 @@
 // @match        https://rocket-league.com/trades/*
 // @grant        none
 // ==/UserScript==
-(function() {
+(function () {
     'use strict';
     var arr = [];
 
-    // declare functions    
-    var updateTrade = function(index) {
+    // declare functions
+    var checkTime = function (i) {
+        if (i < 10) {
+            i = "0" + i;
+        }
+        return i;
+    }
+    var updateTrade = function (index) {
         if (index === arr.length) {
             var today = new Date();
-            var time = today.getHours() + ":" + today.getMinutes();
-            console.log('Finished updating trades at ' + time);
-            $('#rlg-automate-trades').val('Updated at ' + time + '. Automate again?')
+            var time = today.getHours() + ":" + checkTime(today.getMinutes());
+            window.location.href = window.location.href.split('?')[0] + '?rltime=' + time;
             return;
         }
         var myWindow = window.open(arr[index]);
-        var myLoad = function() {
+        var myLoad = function () {
             try {
                 myWindow.document.querySelector('.rlg-btn-trade-form.rlg-btn-primary').click();
-                setTimeout(function() {
+                setTimeout(function () {
                     myWindow.close();
                     // recursively update following trades
-                    setTimeout(function() {
+                    setTimeout(function () {
                         updateTrade(index + 1);
                     }, 8000);
                 }, 8000);
@@ -38,17 +43,28 @@
         }
         myWindow.addEventListener('load', myLoad, false);
     }
-    var initiate = function() {
+    var initiate = function () {
         $('#rlg-automate-trades').val('Updating trades!')
-        updateTrade(0);        
+        updateTrade(0);
     };
 
+    // determine if the trades were just refreshed
+    var inputText;
+    const urlParams = new URLSearchParams(window.location.search);
+    const rltime = urlParams.get('rltime');
+
+    if (rltime) {
+        inputText = 'Updated at ' + rltime + '. Automate again?';
+    } else {
+        inputText = 'Automate trades';
+    }
+
     // add a button to start automation
-    $('body').append('<input type="button" value="Automate trades" id="rlg-automate-trades">')
+    $('body').append('<input type="button" value="' + inputText + '" id="rlg-automate-trades">')
     $('#rlg-automate-trades').css('position', 'fixed').css('top', 0).css('left', 0).css('z-index', 99999).css('color', 'black');
     $('#rlg-automate-trades').click(initiate);
 
-    $('.rlg-trade-display-container .rlg-trade-actions p a:nth-child(2)').each(function(index, element) {
+    $('.rlg-trade-display-container .rlg-trade-actions p a:nth-child(2)').each(function (index, element) {
         arr.push(element.href);
     });
     setInterval(() => {
