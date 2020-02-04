@@ -14,6 +14,10 @@
     // declare functions    
     var updateTrade = function(index) {
         if (index === arr.length) {
+            var today = new Date();
+            var time = today.getHours() + ":" + today.getMinutes();
+            console.log('Finished updating trades at ' + time);
+            $('#rlg-automate-trades').val('Updated at ' + time + '. Automate again?')
             return;
         }
         var myWindow = window.open(arr[index]);
@@ -35,16 +39,14 @@
         myWindow.addEventListener('load', myLoad, false);
     }
     var initiate = function() {
-        updateTrade(0);
-        var today = new Date();
-        var time = today.getHours() + ":" + today.getMinutes();
-        console.log('Finished updating trades at ' + time);
+        updateTrade(0);        
     };
 
     // add a button to start automation
     $('body').append('<input type="button" value="Automate trades" id="rlg-automate-trades">')
     $('#rlg-automate-trades').css('position', 'fixed').css('top', 0).css('left', 0).css('z-index', 99999).css('color', 'black');
     $('#rlg-automate-trades').click(function() {
+        $('#rlg-automate-trades').val('Updating trades!')
         initiate();
         setInterval(() => {
             initiate();
